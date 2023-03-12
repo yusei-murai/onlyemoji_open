@@ -1,8 +1,10 @@
 class Follow {
-  String id;
-  String fromUserId; //フォローしてるID
-  String toUserId; //フォローされてるID
-  DateTime? createdTime;
+  String userId;
 
-  Follow({required this.id,required this.fromUserId,required this.toUserId,this.createdTime});
+  Follow({required this.userId});
+
+  @override
+  String toString() {
+    return 'Event{user_id: $userId}';
+  }
 }

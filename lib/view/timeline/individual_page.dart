@@ -4,8 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:onlyemoji/model/post.dart';
 import 'package:onlyemoji/model/account.dart';
 import 'package:onlyemoji/utils/authentication.dart';
-import 'package:onlyemoji/utils/firestore/posts.dart';
-import 'package:onlyemoji/utils/firestore/users.dart';
+import 'package:onlyemoji/utils/infra/follows.dart';
+import 'package:onlyemoji/utils/infra/posts.dart';
+import 'package:onlyemoji/utils/infra/users.dart';
 import 'package:onlyemoji/utils/function_utils.dart';
 import 'package:onlyemoji/utils/widget_utils.dart';
 
@@ -18,6 +19,17 @@ class IndividualPage extends StatefulWidget {
 }
 
 class _IndividualPageState extends State<IndividualPage> {
+  bool isfollow = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future(() async {
+      isfollow = await FollowFirestore.isFollow(widget.person.id);
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Account person = widget.person;
@@ -50,10 +62,34 @@ class _IndividualPageState extends State<IndividualPage> {
                           ],
                         ),
                       ),
+                      (me.id != person.id) ? OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(30, 30),
+                            backgroundColor: (isfollow == true) ? Colors.pink : Colors.white
+                        ),
+                        onPressed: () async {
+                          if(isfollow == true){
+                            var _result = await FollowFirestore.deleteFollow(person.id);
+                            if (_result == true){
+                              setState(() {
+                                isfollow = false;
+                              });
+                            }
+                          }else{
+                            var _result = await FollowFirestore.insertFollow(person.id);
+                            if (_result == true){
+                              setState(() {
+                                isfollow = true;
+                              });
+                            }
+                          }
+                        },
+                        child: (isfollow == true) ? const Text('フォロー中',style: TextStyle(color: Colors.white),) : const Text('フォロー'),
+                      ) : const SizedBox(),
                       (me.id != person.id) ? PopupMenuButton<String>(
                           onSelected: (value) async {
                             if(value == "block"){
-                                if (await UserFirestore.isBlockedUser(person.id)==true){
+                                if (await UserFirestore.isBlockedUser(person.id,me)==true){
                                   await UserFirestore.deleteMyBlockedUser(person.id);
                                   if (!mounted) return;
                                   SnackBarUtils.doneSnackBar("ブロックを解除しました🤚",context);

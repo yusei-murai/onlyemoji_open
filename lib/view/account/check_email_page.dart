@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:onlyemoji/utils/authentication.dart';
-import 'package:onlyemoji/utils/firestore/users.dart';
+import 'package:onlyemoji/utils/infra/users.dart';
 import 'package:onlyemoji/utils/widget_utils.dart';
 import 'package:onlyemoji/view/screen.dart';
 

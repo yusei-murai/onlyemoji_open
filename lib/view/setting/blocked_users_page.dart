@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:onlyemoji/model/account.dart';
 import 'package:onlyemoji/utils/authentication.dart';
-import 'package:onlyemoji/utils/firestore/users.dart';
+import 'package:onlyemoji/utils/infra/users.dart';
 import 'package:onlyemoji/utils/widget_utils.dart';
 
 class BlockedUsers extends StatefulWidget {

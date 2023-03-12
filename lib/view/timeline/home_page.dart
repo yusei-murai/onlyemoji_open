@@ -4,8 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:onlyemoji/model/account.dart';
 import 'package:onlyemoji/model/post.dart';
-import 'package:onlyemoji/utils/firestore/posts.dart';
-import 'package:onlyemoji/utils/firestore/users.dart';
+import 'package:onlyemoji/utils/infra/posts.dart';
+import 'package:onlyemoji/utils/infra/users.dart';
 import 'package:onlyemoji/view/timeline/individual_page.dart';
 import 'package:onlyemoji/view/timeline/onepost_page.dart';
 
@@ -24,12 +24,12 @@ class _HomePageState extends State<HomePage> {
             List<String> postAccountIds = [];
             if (blockedSnapshot.connectionState == ConnectionState.waiting) {
               return const Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(), //whereNotIn: blockedSnapshot.data
               );
             }
             if(blockedSnapshot.hasData && blockedSnapshot.data!.isNotEmpty){
               return StreamBuilder<QuerySnapshot>(
-                  stream: PostFirestore.posts.where('user_id', whereNotIn: blockedSnapshot.data).snapshots(),
+                  stream: PostFirestore.posts.where('user_id', whereNotIn: blockedSnapshot.data).limit(100).snapshots(),
                   builder: (context, postSnapshot){
                     if (postSnapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -137,7 +137,7 @@ class _HomePageState extends State<HomePage> {
               );
             }else{
               return StreamBuilder<QuerySnapshot>(
-                  stream: PostFirestore.posts.orderBy('created_time',descending: true).snapshots(),
+                  stream: PostFirestore.posts.orderBy('created_time',descending: true).limit(100).snapshots(),
                   builder: (context, postSnapshot){
                     if (postSnapshot.connectionState == ConnectionState.waiting) {
                       return const Center(

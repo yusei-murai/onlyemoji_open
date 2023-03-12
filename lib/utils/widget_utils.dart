@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class AppBarUtils {
-  static AppBar createAppbar(BuildContext context,TextButton textButton) {
+  static AppBar createAppbar(BuildContext context,button) {
     return AppBar(
       backgroundColor: Theme.of(context).canvasColor,
       elevation: 0,
       iconTheme: const IconThemeData(color: Colors.black),
       actions: <Widget>[
-        textButton,
+        button,
       ],
     );
   }
@@ -30,6 +31,16 @@ class SnackBarUtils{
         duration: const Duration(seconds: 2),
         content: Text(msg),
       ),
+    );
+  }
+}
+
+class QrUtils{
+  static QrImage qrImage(String str){
+    return QrImage(
+      data: str,
+      version: QrVersions.auto,
+      size: 200.0,
     );
   }
 }

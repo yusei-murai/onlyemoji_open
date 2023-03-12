@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:onlyemoji/model/account.dart';
 import 'package:onlyemoji/model/post.dart';
-import 'package:onlyemoji/utils/firestore/replys.dart';
+import 'package:onlyemoji/utils/infra/replys.dart';
 
 class PostFirestore {
   static final _firestoreInstance = FirebaseFirestore.instance;
@@ -33,16 +33,30 @@ class PostFirestore {
     List<Post> postList = [];
     try{
       await Future.forEach(ids, (String id) async{
-        var doc = await posts.doc(id).get();
-        Map<String,dynamic> data = doc.data() as Map<String,dynamic>;
-        Post post = Post(
-          id: doc.id,
-          content: data['content'],
-          userId: data['user_id'],
-          createdTime: data['created_time'],
-          updatedTime: data['updated_time'],
-        );
-        postList.add(post);
+        var ref = posts.doc(id);
+        try{
+          var doc = await ref.get(const GetOptions(source: Source.cache));
+          Map<String,dynamic> data = doc.data() as Map<String,dynamic>;
+          Post post = Post(
+            id: doc.id,
+            content: data['content'],
+            userId: data['user_id'],
+            createdTime: data['created_time'],
+            updatedTime: data['updated_time'],
+          );
+          postList.add(post);
+        }on FirebaseException catch(e){
+          var doc = await ref.get(const GetOptions(source: Source.server));
+          Map<String,dynamic> data = doc.data() as Map<String,dynamic>;
+          Post post = Post(
+            id: doc.id,
+            content: data['content'],
+            userId: data['user_id'],
+            createdTime: data['created_time'],
+            updatedTime: data['updated_time'],
+          );
+          postList.add(post);
+        }
       });
       return postList;
     }on FirebaseException catch(e){

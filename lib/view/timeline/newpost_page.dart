@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onlyemoji/model/post.dart';
 import 'package:onlyemoji/utils/authentication.dart';
-import 'package:onlyemoji/utils/firestore/posts.dart';
+import 'package:onlyemoji/utils/infra/posts.dart';
 import 'package:onlyemoji/utils/validator/input_validator.dart';
 import 'package:onlyemoji/utils/widget_utils.dart';
 

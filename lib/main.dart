@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:onlyemoji/model/account.dart';
 import 'package:onlyemoji/provider/bottom_navigation_bar_provider.dart';
 import 'package:onlyemoji/utils/authentication.dart';
-import 'package:onlyemoji/utils/firestore/users.dart';
+import 'package:onlyemoji/utils/infra/users.dart';
 import 'package:onlyemoji/view/account/signin_page.dart';
 import 'package:onlyemoji/view/screen.dart';
 import 'package:provider/provider.dart';

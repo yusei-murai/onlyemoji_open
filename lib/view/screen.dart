@@ -6,6 +6,7 @@ import 'package:onlyemoji/provider/bottom_navigation_bar_provider.dart';
 import 'package:onlyemoji/utils/authentication.dart';
 import 'package:onlyemoji/utils/widget_utils.dart';
 import 'package:onlyemoji/view/account/signin_page.dart';
+import 'package:onlyemoji/view/setting/qr_page.dart';
 import 'package:onlyemoji/view/setting/setting_page.dart';
 import 'package:onlyemoji/view/timeline/home_page.dart';
 import 'package:onlyemoji/view/timeline/my_page.dart';
@@ -14,6 +15,7 @@ import 'package:onlyemoji/view/timeline/newpost_page.dart';
 
 class Screen extends StatelessWidget {
   List<Widget> pageList = [
+    HomePage(),
     HomePage(),
     MyPage(),
   ];
@@ -41,6 +43,21 @@ class Screen extends StatelessWidget {
               //     MaterialPageRoute(builder: (context) => Screen()),
               //   );
               // },
+            ),
+            ListTile(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: const [
+                  Icon(Icons.qr_code),
+                  Text(' QR'),
+                ],
+              ),
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => QrPage(me)),
+                );
+              },
             ),
             ListTile(
               title: Row(
@@ -107,12 +124,16 @@ class Screen extends StatelessWidget {
         } ,
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
+              icon: Icon(Icons.public),
               label: '',
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.perm_identity_outlined),
+              icon: Icon(Icons.people_outlined),
               label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.perm_identity_outlined),
+            label: '',
           ),
         ],
         currentIndex: bottomNavigationBar.currentIndex,

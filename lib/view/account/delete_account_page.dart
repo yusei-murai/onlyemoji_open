@@ -3,7 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:onlyemoji/model/account.dart';
 import 'package:onlyemoji/utils/authentication.dart';
-import 'package:onlyemoji/utils/firestore/users.dart';
+import 'package:onlyemoji/utils/infra/users.dart';
 import 'package:onlyemoji/utils/widget_utils.dart';
 import 'package:onlyemoji/view/account/signin_page.dart';
 

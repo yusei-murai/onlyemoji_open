@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:onlyemoji/model/account.dart';
 import 'package:onlyemoji/utils/authentication.dart';
-import 'package:onlyemoji/utils/firestore/posts.dart';
+import 'package:onlyemoji/utils/infra/posts.dart';
 
 class UserFirestore {
   static final _firestoreInstance = FirebaseFirestore.instance;
@@ -80,17 +80,32 @@ class UserFirestore {
     Map<String,Account> map = {};
     try{
       await Future.forEach(accountIds, (String accountId) async {
-        var doc = await users.doc(accountId).get();
-        Map<String,dynamic> data = doc.data() as Map<String,dynamic>;
-        Account postAccount = Account(
-            id: accountId,
-            name: data['name'],
-            imagePath: data['image_path'],
-            comment: data['comment'],
-            createdTime: data['created_time'],
-            updatedTime: data['updated_data']
-        );
-        map[accountId] = postAccount;
+        var ref = users.doc(accountId);
+        try{
+          var doc = await ref.get(const GetOptions(source: Source.cache));
+          Map<String,dynamic> data = doc.data() as Map<String,dynamic>;
+          Account postAccount = Account(
+              id: accountId,
+              name: data['name'],
+              imagePath: data['image_path'],
+              comment: data['comment'],
+              createdTime: data['created_time'],
+              updatedTime: data['updated_data']
+          );
+          map[accountId] = postAccount;
+        } on FirebaseException catch(e){
+          var doc = await ref.get(const GetOptions(source: Source.server));
+          Map<String,dynamic> data = doc.data() as Map<String,dynamic>;
+          Account postAccount = Account(
+              id: accountId,
+              name: data['name'],
+              imagePath: data['image_path'],
+              comment: data['comment'],
+              createdTime: data['created_time'],
+              updatedTime: data['updated_data']
+          );
+          map[accountId] = postAccount;
+        }
       }
       );
       return map;
@@ -134,15 +149,24 @@ class UserFirestore {
     }
   }
 
-  static Future<dynamic> isBlockedUser(String accountId) async {
+  static Future<dynamic> isBlockedUser(String accountId,Account me) async {
     try{
-      Account me = Authentication.myAccount!;
-      var user = await users.doc(me.id).collection('blocked_users').doc(accountId).get();
+      try{
+        var user = await users.doc(me.id).collection('blocked_users').doc(accountId).get(const GetOptions(source: Source.cache));
 
-      if(user.exists){
-        return true;
-      }else{
-        return false;
+        if(user.exists){
+          return true;
+        }else{
+          return false;
+        }
+      } on FirebaseException catch(e) {
+        var user = await users.doc(me.id).collection('blocked_users').doc(accountId).get(const GetOptions(source: Source.server));
+
+        if(user.exists){
+          return true;
+        }else{
+          return false;
+        }
       }
     }on FirebaseException catch(e){
       return false;
@@ -151,16 +175,29 @@ class UserFirestore {
 
   static Future<List<String>?> getMyBlockedUserIdList() async {
     Account me = Authentication.myAccount!;
+    var ref = users.doc(me.id).collection('blocked_users');
 
-    final QuerySnapshot snapshot = await users.doc(me.id).collection('blocked_users').get();
+    try{
+      var doc = await ref.limit(100).get(const GetOptions(source: Source.cache));
+      final List<String> blockIds = doc.docs.map((DocumentSnapshot document) {
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
-    final List<String> blockIds = snapshot.docs.map((DocumentSnapshot document) {
-      Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+        final String blockUserId = data['user_id'];
+        return blockUserId;
+      }).toList();
 
-      final String blockUserId = data['user_id'];
-      return blockUserId;
-    }).toList();
+      return blockIds;
 
-    return blockIds;
+    }on FirebaseException catch(e){
+      var doc = await ref.limit(100).get(const GetOptions(source: Source.server));
+      final List<String> blockIds = doc.docs.map((DocumentSnapshot document) {
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+        final String blockUserId = data['user_id'];
+        return blockUserId;
+      }).toList();
+
+      return blockIds;
+    }
   }
 }

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:onlyemoji/model/account.dart';
 import 'package:onlyemoji/utils/authentication.dart';
-import 'package:onlyemoji/utils/firestore/users.dart';
+import 'package:onlyemoji/utils/infra/users.dart';
 import 'package:onlyemoji/utils/function_utils.dart';
 import 'package:onlyemoji/utils/validator/input_validator.dart';
 import 'package:onlyemoji/view/account/check_email_page.dart';
